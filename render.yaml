@@ -1,0 +1,19 @@
+# Render blueprint: deploy the backend as a Docker web service and the
+# frontend as a static site. After the backend is live, set the frontend
+# build env VITE_API_URL to the backend URL and redeploy the frontend.
+services:
+  - type: web
+    name: wind-forecast-backend
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /api/health
+  - type: web
+    name: wind-forecast-frontend
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://wind-forecast-backend.onrender.com
+        # Replace with your actual backend URL after first deploy.
